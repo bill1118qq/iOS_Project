@@ -32,7 +32,7 @@ static void update_xpath_nodes(xmlNodeSetPtr nodes, const xmlChar* value) {
 }
 
 
-static void PerformXPathUpdate(xmlDocPtr doc, NSString *query, NSString *newValue)
+static void PerformXPathContentUpdate(xmlDocPtr doc, NSString *query, NSString *newValue)
 {
     xmlXPathContextPtr xpathCtx;
     xmlXPathObjectPtr xpathObj;
@@ -70,7 +70,7 @@ static void PerformXPathUpdate(xmlDocPtr doc, NSString *query, NSString *newValu
     return;
 }
 
-NSData *PerformHTMLXPathUpdate(NSData *document, NSString *query, NSString *newValue)
+NSData *PerformHTMLXPathContentUpdate(NSData *document, NSString *query, NSString *newValue)
 {
     xmlDocPtr doc;
     xmlChar *html_buf;
@@ -83,15 +83,11 @@ NSData *PerformHTMLXPathUpdate(NSData *document, NSString *query, NSString *newV
       NSLog(@"Unable to parse.");
       return nil;
     }
-    NSArray *pathArray =  NSSearchPathForDirectoriesInDomains(NSDocumentationDirectory, NSUserDomainMask, YES);
-    NSString *filePath = [[pathArray objectAtIndex:0] stringByAppendingPathComponent:@"tmp.html"];
 
-    PerformXPathUpdate(doc, query, newValue);
+    PerformXPathContentUpdate(doc, query, newValue);
     html_buf = malloc(len);
-
-    htmlSaveFile([filePath cStringUsingEncoding:NSUTF8StringEncoding], doc);
-
-    document = [NSData dataWithContentsOfFile:filePath];
+    htmlDocDumpMemory(doc, &html_buf, &len);
+    document = [NSData dataWithBytes:html_buf length:len];
     xmlFreeDoc(doc);
     free(html_buf);
     return document;

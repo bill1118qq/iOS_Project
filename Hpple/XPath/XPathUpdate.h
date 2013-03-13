@@ -8,4 +8,4 @@
 //  mail:bill1118qq@gmail.com
 
 
-NSData *PerformHTMLXPathUpdate(NSData *document, NSString *query, NSString *newValue);
+NSData *PerformHTMLXPathContentUpdate(NSData *document, NSString *query, NSString *newValue);
